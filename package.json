@@ -1,0 +1,26 @@
+{
+  "name": "@evarentha/linearpress-custom-pages",
+  "version": "1.0.0",
+  "private": false,
+  "description": "创建可自定义路由的页面（内置/可视化编辑器），并支持上传带数据片段替换的静态 HTML 页面。路由遵循先注册原则：系统保留路由与后续插件路由自动覆盖，列表页实时提示冲突。",
+  "type": "module",
+  "main": "index.ts",
+  "files": [
+    "index.ts",
+    "plugin.json",
+    "src",
+    "views",
+    "public",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "linearpress",
+    "plugin",
+    "custom-pages"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
