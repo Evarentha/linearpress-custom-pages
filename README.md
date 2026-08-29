@@ -62,13 +62,13 @@ Pages：`page:manage|create|edit|delete`；Static：`static:manage|create|edit|d
 cd base && sh scripts/sync-plugins.sh custom-pages
 
 # Option 2 — clone into runtime dir（目录名必须等于插件 id）
-git clone https://github.com/Averithen/linearpress-custom-pages src/plugins/custom-pages
+git clone https://github.com/Evarentha/linearpress-custom-pages src/plugins/custom-pages
 ```
 
 ## Local Development / 本地开发：怎么拉 / 怎么改 / 怎么跑
 
 ```bash
-git clone https://github.com/Averithen/linearpress-custom-pages LinearPress/Plugins/custom-pages
+git clone https://github.com/Evarentha/linearpress-custom-pages LinearPress/Plugins/custom-pages
 cd LinearPress/base
 npm install && npm run db:init
 sh scripts/sync-plugins.sh custom-pages
