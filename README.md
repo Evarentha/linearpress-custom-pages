@@ -58,7 +58,7 @@ cd base
 sh scripts/sync-plugins.sh custom-pages
 
 # 方式二：克隆到运行目录（目录名必须等于插件 id）
-git clone <本仓库地址> src/plugins/custom-pages
+git clone https://git.linearteam.top/moyuzj/linearpress-custom-pages src/plugins/custom-pages
 
 # 改完重新同步并启动
 npm run typecheck && npm run dev
@@ -67,7 +67,7 @@ npm run typecheck && npm run dev
 ## 本地开发：怎么拉 / 怎么改 / 怎么跑
 
 ```bash
-git clone <本仓库地址> LinearPress/Plugins/custom-pages
+git clone https://git.linearteam.top/moyuzj/linearpress-custom-pages LinearPress/Plugins/custom-pages
 cd LinearPress/base
 npm install && npm run db:init
 sh scripts/sync-plugins.sh custom-pages
