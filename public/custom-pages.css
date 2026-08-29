@@ -1,0 +1,40 @@
+/*
+ * Author: LinearPress Team
+ * custom-pages 插件样式：后台列表/编辑器 + 前台页面。
+ */
+
+/* ---------- 后台：列表 ---------- */
+.lp-notice{background:#eef7ee;border:1px solid #bcd9bc;color:#2f6b2f;padding:10px 14px;margin:0 0 18px;font-size:13px}
+.lp-table{width:100%;border-collapse:collapse;background:#fff}
+.lp-table th,.lp-table td{border:1px solid #e5e5e5;padding:10px 12px;font-size:13px;text-align:left;vertical-align:top}
+.lp-table th{background:#fafaf8;font-size:12px;letter-spacing:.05em;color:#555}
+.lp-route{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#f4f4f2;padding:2px 6px;border-radius:4px;font-size:12px;white-space:nowrap}
+.lp-status{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px}
+.lp-status-published{background:#e6f4e6;color:#2c6b2c}
+.lp-status-draft{background:#eee;color:#666}
+.lp-route-warn{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px}
+.lp-route-plugin{background:#fff7e0;color:#8a6d1a;border:1px solid #ecd9a0}
+.lp-route-system{background:#fde9e9;color:#9c2f2f;border:1px solid #f0c4c4}
+.lp-route-ok{color:#4a9d4a;font-size:12px}
+.lp-actions a,.lp-actions form{display:inline-block;margin-right:8px}
+.lp-empty{color:#888;padding:18px 0;font-size:13px}
+
+/* ---------- 后台：编辑器 ---------- */
+.lp-html-input{min-height:340px;width:100%;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.6;white-space:pre;padding:10px;box-sizing:border-box}
+.editor-field small{display:block;color:#888;font-size:12px;margin-top:4px;line-height:1.5}
+.editor-field code{background:#f4f4f2;padding:1px 5px;border-radius:4px;font-size:11px}
+
+/* ---------- 前台页面 ---------- */
+.lp-page{max-width:720px;margin:0 auto;padding:32px 0}
+.lp-page-meta{color:#999;font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 8px}
+.lp-page-title{font:400 40px Georgia,serif;margin:0 0 24px;letter-spacing:.02em}
+.lp-page-body{line-height:1.85;font-size:16px}
+.lp-page-body img{max-width:100%;height:auto}
+.lp-page-body table{border-collapse:collapse;width:100%;margin:16px 0}
+.lp-page-body th,.lp-page-body td{border:1px solid #ddd;padding:8px 10px;font-size:14px}
+.lp-page-edit{margin-top:36px;border-top:1px solid #e5e5e5;padding-top:14px}
+.lp-page-edit a{color:#777;font-size:13px;text-decoration:none}
+.lp-page-edit a:hover{color:#1a1a1a;text-decoration:underline}
+
+/* modern-editor 页面编辑器内的路由行 */
+.modern-slug-row{display:flex;align-items:center;gap:6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;color:#888;max-width:720px;margin:0 auto;padding:0 48px 6px}

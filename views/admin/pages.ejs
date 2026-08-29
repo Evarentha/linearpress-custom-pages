@@ -1,0 +1,29 @@
+<!--
+  Author: LinearPress Team
+  custom-pages：页面列表（kind=page）
+-->
+<div class="page-head"><h1>页面</h1><a class="button" href="/admin/pages/new">+ 新建页面</a></div>
+<% if (notice === 'saved') { %><p class="lp-notice">页面已保存，路由已立即生效。</p><% } %>
+<% if (notice === 'deleted') { %><p class="lp-notice">页面已删除。</p><% } %>
+<table class="lp-table">
+  <thead><tr><th>标题</th><th>路由</th><th>状态</th><th>路由占用</th><th>操作</th></tr></thead>
+  <tbody>
+    <% items.forEach(item => { %>
+      <tr>
+        <td><strong><%= item.title %></strong></td>
+        <td><code class="lp-route"><%= item.route %></code></td>
+        <td><span class="lp-status lp-status-<%= item.status %>"><%= item.status === 'published' ? '已发布' : '草稿' %></span></td>
+        <td>
+          <% const conflict = conflicts[item.id]; %>
+          <% if (conflict === 'plugin') { %><span class="lp-route-warn lp-route-plugin">⚠ 该路由已被插件占用，请修改路由</span><% } else if (conflict === 'system') { %><span class="lp-route-warn lp-route-system">🚫 该路由已被系统保留，请修改路由</span><% } else { %><span class="lp-route-ok">可用</span><% } %>
+        </td>
+        <td class="lp-actions">
+          <% if (item.status === 'published' && !conflicts[item.id]) { %><a href="<%= item.route %>" target="_blank" rel="noopener">访问</a><% } %>
+          <a href="/admin/pages/<%= item.id %>/edit">编辑</a>
+          <form class="inline" method="post" action="/admin/pages/<%= item.id %>/delete" onsubmit="return confirm('确定删除该页面？此操作不可恢复。');"><button type="submit">删除</button></form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+<% if (!items.length) { %><p class="lp-empty">还没有页面。点击右上角「+ 新建页面」创建第一个自定义页面（个人介绍、隐私政策等非文章内容）。</p><% } %>

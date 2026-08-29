@@ -1,0 +1,37 @@
+<!--
+  Author: LinearPress Team
+  custom-pages：静态页面编辑 / 上传。
+  说明：HTML 内容不经过 multipart 上传，前端用 FileReader 读取文件文本后随表单提交；
+  也可以直接粘贴 HTML 源码。文件文本保存在数据库（跟随主数据库驱动）。
+-->
+<div class="post-editor-shell"><div class="page-head"><h1><%= entry ? '编辑静态页面' : '新建静态页面' %></h1></div>
+<form class="editor-form" method="post" action="/admin/static/save" id="lp-static-form">
+  <input type="hidden" name="id" value="<%= entry?.id ?? '' %>">
+  <label class="editor-field">名称<input name="title" required value="<%= entry?.title ?? '' %>" placeholder="例如：数据面板"></label>
+  <label class="editor-field">路由<input name="route" id="lp-static-route" required value="<%= entry?.route ?? route ?? '' %>" placeholder="/status"><small>以 / 开头，例如 /status、/live。创建时指定；保存后立即生效。</small></label>
+  <label class="editor-field">状态<select name="status"><option value="draft" <%= entry?.status === 'draft' || !entry ? 'selected' : '' %>>草稿</option><option value="published" <%= entry?.status === 'published' ? 'selected' : '' %>>发布</option></select></label>
+  <label class="editor-field">上传 HTML 文件<input type="file" id="lp-static-file" accept=".html,.htm,.xhtml,text/html" title="选择 HTML 文件，内容将自动读取"><small>选择一个 .html 文件；文件内容会被读取并填入下方编辑器。也可以在下方直接粘贴。</small></label>
+  <label class="editor-field">HTML 内容（可含数据片段占位符）<textarea id="lp-static-html" name="html" class="lp-html-input" placeholder="<div>…</div>
+
+支持数据占位符，访问时由注入脚本替换：
+  {{ site.siteName }}
+  {{# recentPosts }}{{ title }} — {{ url }}{{/ recentPosts }}"><%= entry?.html ?? '' %></textarea><small>占位符语法：单值 <code>{{ 路径 }}</code>；列表循环 <code>{{# 路径 }}…{{/ 路径 }}</code>。页面脚本可调用 <code>LinearPressStatic.get('recentPosts')</code> 获取数据。</small></label>
+  <input type="hidden" name="file_name" id="lp-static-file-name" value="<%= entry?.file_name ?? '' %>">
+  <button class="button editor-submit" type="submit">保存静态页面</button>
+</form></div>
+<script>
+(() => {
+  const file = document.getElementById('lp-static-file');
+  const textarea = document.getElementById('lp-static-html');
+  const fileName = document.getElementById('lp-static-file-name');
+  if (!file || !textarea) return;
+  file.addEventListener('change', () => {
+    const picked = file.files && file.files[0];
+    if (!picked) return;
+    const reader = new FileReader();
+    reader.onload = () => { textarea.value = String(reader.result || ''); fileName.value = picked.name; };
+    reader.onerror = () => alert('读取文件失败，请换一个文件或直接粘贴内容。');
+    reader.readAsText(picked, 'utf-8');
+  });
+})();
+</script>

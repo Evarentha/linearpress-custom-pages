@@ -1,0 +1,37 @@
+<!--
+  Author: LinearPress Team
+  custom-pages：页面编辑器。
+  modernEditor=true 时复用 modern-editor 的可视化编辑器（标记块格式与 modern-editor 一致）；
+  否则使用内置块编辑器（与文章编辑器同源）。
+-->
+<% if (modernEditor) { %>
+<div class="modern-editor-page" data-modern-editor data-cloud-saved-at="<%= page?.updated_at ? Date.parse(page.updated_at) : 0 %>">
+  <form id="modern-editor-form" method="post" action="/admin/pages/save">
+    <input type="hidden" name="id" value="<%= page?.id ?? '' %>">
+    <input type="hidden" name="content_json" id="modern-content-json">
+    <header class="modern-topbar">
+      <div><a class="modern-back" href="/admin/pages" aria-label="返回页面列表">←</a><span class="modern-status" data-save-status>未保存</span></div>
+      <div class="modern-actions"><button type="button" class="modern-icon-button" data-save-draft title="保存草稿" aria-label="保存草稿">↥</button><button type="button" class="modern-publish-button" data-open-publish>发布</button></div>
+    </header>
+    <main class="modern-canvas">
+      <input class="modern-title" id="post-title" name="title" required value="<%= page?.title ?? '' %>" placeholder="页面名称" autocomplete="off">
+      <div class="modern-slug-row"><label for="lp-page-route" style="margin:0">路由</label><input id="lp-page-route" name="route" required value="<%= page?.route ?? '' %>" placeholder="/about 或 /privacy" style="flex:1;min-width:0"><span style="color:#999;font-size:12px;white-space:nowrap">以 / 开头，创建时指定</span></div>
+      <div class="modern-editor-toolbar" role="toolbar" aria-label="插入区块"><span class="modern-toolbar-label">插入</span><div data-block-toolbar></div></div>
+      <section class="modern-document" data-document aria-label="页面内容"></section>
+      <button class="modern-add-block" type="button" data-add-paragraph>在这里开始写作 <span>+</span></button>
+    </main>
+    <aside class="modern-publish-drawer" data-publish-drawer aria-hidden="true">
+      <div class="modern-drawer-head"><div><span class="modern-kicker">发布检查</span><h2>准备好了吗？</h2></div><button type="button" data-close-publish aria-label="关闭">×</button></div>
+      <div class="modern-summary"><span class="modern-summary-label">页面标题</span><strong data-summary-title>未命名页面</strong><span class="modern-summary-label">当前状态</span><strong data-summary-status>草稿</strong><span class="modern-summary-label">自定义路由</span><strong><%= page?.route ?? '保存后生效' %></strong></div>
+      <label class="modern-schedule" style="display:none"><input type="checkbox" name="schedule_enabled" data-schedule-enabled><span class="modern-checkmark">✓</span><span>启用定时发布</span></label><input type="datetime-local" name="publish_at" data-schedule-time style="display:none">
+      <p class="modern-drawer-note">发布后页面将立即通过自定义路由公开访问。此路由遵循先注册原则：若被系统或其他插件占用，访问时将交由对应路由处理。</p>
+      <button type="button" class="modern-confirm-publish" data-confirm-publish>确认发布</button>
+    </aside>
+    <div class="modern-drawer-backdrop" data-close-publish></div>
+    <select name="status" data-status hidden><option value="draft" <%= page?.status === 'draft' || !page ? 'selected' : '' %>>草稿</option><option value="published" <%= page?.status === 'published' ? 'selected' : '' %>>发布</option></select>
+  </form>
+</div>
+<script>window.MODERN_EDITOR_INITIAL = <%- JSON.stringify(blocks ?? []).replace(/</g, '\\u003c') %>;</script>
+<% } else { %>
+<div class="post-editor-shell"><div class="page-head"><h1><%= page ? '编辑页面' : '新建页面' %></h1></div><form class="editor-form" method="post" action="/admin/pages/save"><input type="hidden" name="id" value="<%= page?.id ?? '' %>"><label class="editor-field">标题<input id="page-title" name="title" required value="<%= page?.title ?? '' %>" placeholder="页面标题"></label><label class="editor-field">路由<input id="page-route" name="route" required value="<%= page?.route ?? '' %>" placeholder="/about" data-existing="<%= page ? 'true' : 'false' %>"><small>以 / 开头，例如 /about、/privacy。创建页面时即需指定；保存后立即生效。</small></label><label class="editor-field">状态<select name="status"><option value="draft" <%= page?.status === 'draft' || !page ? 'selected' : '' %>>草稿</option><option value="published" <%= page?.status === 'published' ? 'selected' : '' %>>发布</option></select></label><div id="editor" data-content="<%- JSON.stringify(blocks ?? []).replace(/</g, '\\u003c').replace(/'/g, '&#39;') %>"></div><textarea id="content_json" name="content_json" hidden></textarea><button class="button editor-submit" type="submit">保存页面</button></form></div><script src="/js/editor.js?v=2.1.0"></script>
+<% } %>

@@ -1,0 +1,26 @@
+{
+  "id": "custom-pages",
+  "name": "自定义页面与静态托管",
+  "version": "1.0.0",
+  "description": "创建可自定义路由的页面（内置/可视化编辑器），并支持上传带数据片段替换的静态 HTML 页面。路由遵循先注册原则：系统保留路由与后续插件路由自动覆盖，列表页实时提示冲突。",
+  "author": "LinearPress",
+  "icon": "📄",
+  "type": "both",
+  "main": "index.ts",
+  "runtime": "cordis",
+  "preboot": false,
+  "permissions": [
+    "page:manage",
+    "page:create",
+    "page:edit",
+    "page:delete",
+    "static:manage",
+    "static:create",
+    "static:edit",
+    "static:delete"
+  ],
+  "views": "views",
+  "public": "public",
+  "styles": ["custom-pages.css"],
+  "scripts": []
+}

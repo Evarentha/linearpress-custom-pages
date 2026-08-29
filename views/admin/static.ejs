@@ -1,0 +1,30 @@
+<!--
+  Author: LinearPress Team
+  custom-pages：静态托管列表（kind=static）
+-->
+<div class="page-head"><h1>静态托管</h1><a class="button" href="/admin/static/new">+ 新建静态页面</a></div>
+<% if (notice === 'saved') { %><p class="lp-notice">静态页面已保存，路由已立即生效。</p><% } %>
+<% if (notice === 'deleted') { %><p class="lp-notice">静态页面已删除。</p><% } %>
+<table class="lp-table">
+  <thead><tr><th>名称</th><th>路由</th><th>文件</th><th>状态</th><th>路由占用</th><th>操作</th></tr></thead>
+  <tbody>
+    <% items.forEach(item => { %>
+      <tr>
+        <td><strong><%= item.title %></strong></td>
+        <td><code class="lp-route"><%= item.route %></code></td>
+        <td><%= item.file_name || 'index.html' %></td>
+        <td><span class="lp-status lp-status-<%= item.status %>"><%= item.status === 'published' ? '已发布' : '草稿' %></span></td>
+        <td>
+          <% const conflict = conflicts[item.id]; %>
+          <% if (conflict === 'plugin') { %><span class="lp-route-warn lp-route-plugin">⚠ 该路由已被插件占用，请修改路由</span><% } else if (conflict === 'system') { %><span class="lp-route-warn lp-route-system">🚫 该路由已被系统保留，请修改路由</span><% } else { %><span class="lp-route-ok">可用</span><% } %>
+        </td>
+        <td class="lp-actions">
+          <% if (item.status === 'published' && !conflicts[item.id]) { %><a href="<%= item.route %>" target="_blank" rel="noopener">访问</a><% } %>
+          <a href="/admin/static/<%= item.id %>/edit">编辑</a>
+          <form class="inline" method="post" action="/admin/static/<%= item.id %>/delete" onsubmit="return confirm('确定删除该静态页面？此操作不可恢复。');"><button type="submit">删除</button></form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+<% if (!items.length) { %><p class="lp-empty">还没有静态页面。上传 HTML 文件（可含 {{snippet}} 数据占位符），指定路由后即可公开访问。</p><% } %>
