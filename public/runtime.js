@@ -1,15 +1,35 @@
 /*
- * Author: LinearPress Team
- * custom-pages 静态托管运行时。
+ * Static Hosting Runtime Script
  *
- * 作用（被静态页面注入引用）：
- *  1. 访问时请求 /api/custom-pages/data 获取动态数据；
- *  2. 将 HTML 中的 {{ 路径 }} 占位符替换为数据值（支持 {{# 路径 }}…{{/ 路径 }} 循环）；
- *  3. 暴露 window.LinearPressStatic：页面自身的 <script> 可直接调用其接口取数。
+ * Browser runtime injected into static pages to resolve live data
+ * placeholders.
  *
- * 占位符示例：
- *   {{ site.siteName }}
- *   {{# recentPosts }}<a href="{{ url }}">{{ title }}</a>{{/ recentPosts }}
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/**
+ * <p>custom-pages static hosting runtime (referenced by injection from
+ * static pages):</p>
+ * <ol>
+ * <li>On visit it requests /api/custom-pages/data to fetch the dynamic
+ * data.</li>
+ * <li>It replaces {{ path }} placeholders in the HTML with data values
+ * (supporting {{# path }}...{{/ path }} loops).</li>
+ * <li>It exposes window.LinearPressStatic so the page's own scripts can
+ * call its API to fetch data.</li>
+ * </ol>
+ *
+ * <p>Placeholder examples:</p>
+ * <ul>
+ * <li>{{ site.siteName }}</li>
+ * <li>{{# recentPosts }}<a href="{{ url }}">{{ title }}</a>{{/ recentPosts }}</li>
+ * </ul>
+ *
+ * @since 1.0.0
  */
 (() => {
   const DATA_URL = '/api/custom-pages/data';

@@ -1,5 +1,19 @@
 <!--
-  Author: LinearPress Team
-  custom-pages：自定义页面前台渲染（复用站点 web 布局）。
+  Custom Page View
+
+  Front-end rendering of a single custom page.
+
+  Authors:
+  MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+
+  Copyright (C) 2026 Evarentha
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<!--
+  custom-pages custom page front-end rendering (reusing the site web
+  layout).
+
+  @since 1.0.0
 -->
 <article class="lp-page"><p class="lp-page-meta">自定义页面</p><h1 class="lp-page-title"><%= page.title %></h1><div class="lp-page-body"><%- html %></div><% if (currentUser) { %><p class="lp-page-edit"><a href="/admin/pages/<%= page.id %>/edit">编辑此页面 →</a></p><% } %></article>

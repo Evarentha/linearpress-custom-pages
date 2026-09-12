@@ -1,6 +1,19 @@
 /*
- * Author: LinearPress Team
- * custom-pages 插件样式：后台列表/编辑器 + 前台页面。
+ * Custom Pages Stylesheet
+ *
+ * Styles for custom-pages admin lists, editors, and front-end pages.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/*
+ * custom-pages plugin styles: admin lists / editor plus front-end pages.
+ *
+ * @since 1.0.0
  */
 
 /* ---------- 后台：列表 ---------- */

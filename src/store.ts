@@ -1,14 +1,36 @@
 /*
- * Author: LinearPress Team
- * custom-pages 插件数据层：页面 / 静态托管 的存取与路由冲突判定。
+ * Custom Pages Data Store
  *
- * 路由语义（先注册原则）：
- *  - custom-pages 的前台路由不是静态注册的，而是一个“分发中间件”，
- *    在激活阶段最早注册（普通路由挂载之前执行）。
- *  - 分发器在请求时检查“已注册路由表”：若同路径已被系统（core）或其他插件注册，
- *    则 yield（next()）交由对方处理 —— 后注册的插件与系统路由天然覆盖当前页面。
- *  - 冲突状态实时计算，列表页据此展示“已被插件占用 / 已被系统保留”。
- *  - 页面数据按请求实时读取数据库，因此新建/修改路由立即生效，无需重启。
+ * Storage for custom pages and static hosting, plus route conflict
+ * detection.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/**
+ * <p>custom-pages plugin data layer: storage for pages and static hosting
+ * plus route conflict detection.</p>
+ *
+ * <p>Route semantics (first-registration principle):</p>
+ * <ul>
+ * <li>The custom-pages front route is not statically registered; it is a
+ * "dispatch middleware" registered earliest in the activate stage (running
+ * before normal routes are mounted).</li>
+ * <li>At request time the dispatcher checks the registered route table: if
+ * the same path is already registered by the system (core) or another
+ * plugin, it yields (next()) to that handler, so plugins and system routes
+ * registered later naturally override the current page.</li>
+ * <li>Conflict state is computed live, and the list views use it to show
+ * "taken by a plugin" / "reserved by the system".</li>
+ * <li>Page data is read from the database per request, so new or modified
+ * routes take effect immediately without a restart.</li>
+ * </ul>
+ *
+ * @since 1.0.0
  */
 
 import type { RegisteredRoute } from '../../../types/plugin.js';

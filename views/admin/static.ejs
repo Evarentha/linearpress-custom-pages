@@ -1,6 +1,20 @@
 <!--
-  Author: LinearPress Team
-  custom-pages：静态托管列表（kind=static）
+  Static Hosting Admin List
+
+  Admin list of static-hosted pages with route conflict status.
+
+  Authors:
+  MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+
+  Copyright (C) 2026 Evarentha
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<!--
+  custom-pages static hosting list (kind=static): shows name, route, file,
+  status, and route occupancy for every static page.
+
+  @since 1.0.0
 -->
 <div class="page-head"><h1>静态托管</h1><a class="button" href="/admin/static/new">+ 新建静态页面</a></div>
 <% if (notice === 'saved') { %><p class="lp-notice">静态页面已保存，路由已立即生效。</p><% } %>

@@ -1,8 +1,22 @@
 <!--
-  Author: LinearPress Team
-  custom-pages：页面编辑器。
-  modernEditor=true 时复用 modern-editor 的可视化编辑器（标记块格式与 modern-editor 一致）；
-  否则使用内置块编辑器（与文章编辑器同源）。
+  Custom Page Editor
+
+  Admin editor view for creating and editing custom pages.
+
+  Authors:
+  MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+
+  Copyright (C) 2026 Evarentha
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<!--
+  custom-pages page editor. When modernEditor=true it reuses the
+  modern-editor visual editor (marker-block format identical to
+  modern-editor); otherwise it uses the built-in block editor (sharing its
+  origin with the post editor).
+
+  @since 1.0.0
 -->
 <% if (modernEditor) { %>
 <div class="modern-editor-page" data-modern-editor data-cloud-saved-at="<%= page?.updated_at ? Date.parse(page.updated_at) : 0 %>">
@@ -33,5 +47,5 @@
 </div>
 <script>window.MODERN_EDITOR_INITIAL = <%- JSON.stringify(blocks ?? []).replace(/</g, '\\u003c') %>;</script>
 <% } else { %>
-<div class="post-editor-shell"><div class="page-head"><h1><%= page ? '编辑页面' : '新建页面' %></h1></div><form class="editor-form" method="post" action="/admin/pages/save"><input type="hidden" name="id" value="<%= page?.id ?? '' %>"><label class="editor-field">标题<input id="page-title" name="title" required value="<%= page?.title ?? '' %>" placeholder="页面标题"></label><label class="editor-field">路由<input id="page-route" name="route" required value="<%= page?.route ?? '' %>" placeholder="/about" data-existing="<%= page ? 'true' : 'false' %>"><small>以 / 开头，例如 /about、/privacy。创建页面时即需指定；保存后立即生效。</small></label><label class="editor-field">状态<select name="status"><option value="draft" <%= page?.status === 'draft' || !page ? 'selected' : '' %>>草稿</option><option value="published" <%= page?.status === 'published' ? 'selected' : '' %>>发布</option></select></label><div id="editor" data-content="<%- JSON.stringify(blocks ?? []).replace(/</g, '\\u003c').replace(/'/g, '&#39;') %>"></div><textarea id="content_json" name="content_json" hidden></textarea><button class="button editor-submit" type="submit">保存页面</button></form></div><script src="/js/editor.js?v=2.1.0"></script>
+<div class="post-editor-shell"><div class="page-head"><h1><%= page ? '编辑页面' : '新建页面' %></h1></div><form class="editor-form" method="post" action="/admin/pages/save"><input type="hidden" name="id" value="<%= page?.id ?? '' %>"><label class="editor-field">标题<input id="page-title" name="title" required value="<%= page?.title ?? '' %>" placeholder="页面标题"></label><label class="editor-field">路由<input id="page-route" name="route" required value="<%= page?.route ?? '' %>" placeholder="/about" data-existing="<%= page ? 'true' : 'false' %>"><small>以 / 开头，例如 /about、/privacy。创建页面时即需指定；保存后立即生效。</small></label><label class="editor-field">状态<select name="status"><option value="draft" <%= page?.status === 'draft' || !page ? 'selected' : '' %>>草稿</option><option value="published" <%= page?.status === 'published' ? 'selected' : '' %>>发布</option></select></label><div id="editor" data-content="<%- JSON.stringify(blocks ?? []).replace(/&/g, '&amp;').replace(/</g, '\\u003c').replace(/"/g, '&quot;').replace(/'/g, '&#39;') %>"></div><textarea id="content_json" name="content_json" hidden></textarea><button class="button editor-submit" type="submit">保存页面</button></form></div><script src="/js/editor.js?v=2.1.0"></script>
 <% } %>

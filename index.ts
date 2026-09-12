@@ -1,18 +1,39 @@
 /*
- * Author: LinearPress Team
+ * Custom Pages Plugin Entry
  *
- * custom-pages：自定义页面 + 静态托管。
+ * Entry point of the Custom Pages plugin: custom pages plus static hosting.
  *
- * 设计要点：
- *  1. 前台路由为“分发中间件”，在激活阶段最早注册（先注册原则）：
- *     请求时实时读取 custom_pages 表，命中后检查“已注册路由表”。
- *     若同路径已被系统(core)或后续插件注册，则 yield(next()) 交由对方处理，
- *     实现“后来的插件/系统路由覆盖本页面”，并在列表页展示冲突提示。
- *  2. 页面数据按请求实时读取，因此新建/编辑/删除路由立即生效，无需重启。
- *  3. 页面用内置块编辑器；安装 modern-editor 后页面编辑页切换到可视化编辑器
- *     （复用 modern-editor 的标记块格式与本插件侧渲染器，输出完全一致）。
- *  4. 静态托管：上传 HTML 文件，保存时注入 runtime.js，浏览器端按 {{snippet}}
- *     占位符替换动态数据；页面自身脚本可调用 window.LinearPressStatic 接口取数。
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/**
+ * <p>custom-pages: custom pages plus static hosting.</p>
+ *
+ * <p>Design highlights:</p>
+ * <ol>
+ * <li>The front route is a "dispatch middleware" registered earliest in the
+ * activate stage (first-registration principle): on each request it reads
+ * the custom_pages table live and, on a hit, checks the registered route
+ * table. If the same path has already been registered by the system (core)
+ * or a later plugin, it yields (next()) so the other handler takes over,
+ * letting later plugins and system routes override this page; the list view
+ * shows the conflict accordingly.</li>
+ * <li>Page data is read per request, so creating, editing, or deleting
+ * routes takes effect immediately without a restart.</li>
+ * <li>Pages use the built-in block editor; once modern-editor is installed,
+ * the page edit view switches to the visual editor (reusing modern-editor's
+ * marker-block format and this plugin's renderer, with identical output).</li>
+ * <li>Static hosting: upload an HTML file, runtime.js is injected on save,
+ * and the browser replaces {{snippet}} placeholders with live data; the
+ * page's own scripts can call the window.LinearPressStatic API to fetch
+ * data.</li>
+ * </ol>
+ *
+ * @since 1.0.0
  */
 
 import type { Context } from 'cordis';

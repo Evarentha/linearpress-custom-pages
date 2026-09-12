@@ -1,13 +1,32 @@
 /*
- * Author: LinearPress Team
- * custom-pages 内容渲染器。
+ * Custom Page Content Renderer
  *
- * 页面内容与文章共用 content_json 块结构：
- *  - 内置编辑器产物为普通块（paragraph/heading/blockquote/image/custom-html…）。
- *  - 安装了 modern-editor 时，页面允许用可视化编辑器编辑，产物为
- *    LP-MODERN-BLOCK:: base64 标记块（与 modern-editor 存储格式一致）。
- * 本渲染器同时支持两种格式；渲染逻辑与 modern-editor 的服务端渲染保持同构，
- * 保证同一套内容在文章页与自定义页面看到一致的输出。
+ * Renders custom page content blocks into HTML for the front end.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/**
+ * <p>custom-pages content renderer.</p>
+ *
+ * <p>Page content shares the content_json block structure with posts:</p>
+ * <ul>
+ * <li>The built-in editor produces plain blocks (paragraph / heading /
+ * blockquote / image / custom-html, and so on).</li>
+ * <li>When modern-editor is installed, pages can be edited with the visual
+ * editor, producing LP-MODERN-BLOCK:: base64 marker blocks (the same format
+ * modern-editor stores).</li>
+ * </ul>
+ *
+ * <p>This renderer supports both formats, and its rendering logic stays
+ * isomorphic with modern-editor's server-side rendering so the same content
+ * yields identical output on post pages and custom pages.</p>
+ *
+ * @since 1.0.0
  */
 
 import type { Block } from '../../../types/index.js';

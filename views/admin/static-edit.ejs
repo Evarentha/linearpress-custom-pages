@@ -1,8 +1,22 @@
 <!--
-  Author: LinearPress Team
-  custom-pages：静态页面编辑 / 上传。
-  说明：HTML 内容不经过 multipart 上传，前端用 FileReader 读取文件文本后随表单提交；
-  也可以直接粘贴 HTML 源码。文件文本保存在数据库（跟随主数据库驱动）。
+  Static Page Edit and Upload Form
+
+  Admin form for editing or uploading static-hosted pages.
+
+  Authors:
+  MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+
+  Copyright (C) 2026 Evarentha
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<!--
+  custom-pages static page edit / upload. Note: the HTML content is not
+  uploaded as multipart; the front end reads the file text with FileReader
+  and submits it with the form, or HTML source can be pasted directly. The
+  file text is stored in the database (following the main database driver).
+
+  @since 1.0.0
 -->
 <div class="post-editor-shell"><div class="page-head"><h1><%= entry ? '编辑静态页面' : '新建静态页面' %></h1></div>
 <form class="editor-form" method="post" action="/admin/static/save" id="lp-static-form">
