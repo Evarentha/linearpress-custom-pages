@@ -1,33 +1,32 @@
-<!--
-  Author: MoyuZJ
-  Team: LinearTeam
-  Contact: linearteam@foxmail.com
-  Made by MoyuZJ in China with ♥
--->
+# Custom Pages & Static Hosting
 
-# 自定义页面与静态托管（custom-pages）
+[![LinearPress](https://img.shields.io/badge/LinearPress-plugin-7C3AED.svg)](https://www.npmjs.com/package/@evarentha/linearpress) [![npm](https://img.shields.io/npm/v/@evarentha/linearpress-custom-pages.svg)](https://www.npmjs.com/package/@evarentha/linearpress-custom-pages) [![Node.js](https://img.shields.io/badge/node-%3E%3D22-green.svg)](https://nodejs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org) [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 
-创建可自定义路由的**页面**（个人介绍、隐私政策等非文章内容），以及可上传 HTML 文件的**静态托管**
-（带 `{{ snippet }}` 数据占位符替换）。路由遵循**先注册原则**：系统保留路由与后续插件路由自动覆盖，列表页实时提示冲突。
+**English** | [简体中文](README.zh-CN.md)
 
-> 本仓库是 LinearPress 插件 **custom-pages** 的独立开发仓库。插件即 Cordis 插件函数，即插即用、可停用可卸载。
+This LinearPress plugin publishes non-article content (an about page, a privacy policy, a landing page) on routes you choose, without touching the posts table or the permalink namespace. It also hosts static HTML pages whose `{{ placeholder }}` markers get replaced with live site data in the browser, so a hand-written page can still show the site name or the latest posts.
 
-## 插件化的优势
+Route ownership is checked live: if the system or another plugin has claimed a path, this plugin steps aside. Page saves take effect immediately, no restart.
 
-- **路由分发不动核心**：前台分发是一个「最优先注册的中间件」，命中路由且未被占用时渲染页面/静态页；被占则 `next()` 让出——后注册方永远可以覆盖，无需改核心路由表。
-- **不占文章表**：页面独立存储，不进文章列表、不占 permalink 命名空间。
-- **编辑器兼容**：装 modern-editor 后页面编辑切换到可视化编辑器（内容格式完全兼容），插件侧渲染器输出一致。
+## Install
 
-## 功能
+```bash
+git clone https://github.com/Evarentha/linearpress-custom-pages.git src/plugins/custom-pages
+```
 
-- **页面**：块结构内容，内置块编辑器；`modern-editor` 安装后自动切换可视化编辑器；路由由用户指定。
-- **静态托管**：上传 HTML 文件，访问时注入的 `runtime.js` 浏览器端替换 `{{ snippet }}` 占位符；页面脚本可调 `window.LinearPressStatic` 取数。
-- **先注册原则**：分发中间件最早注册；同路径已被系统/插件注册时自动让出，列表页实时显示冲突提示（⚠ 已被插件占用 / 🚫 已被系统保留）。
-- **立即生效**：前台按请求实时读库，创建/修改/删除页面无需重启。
+The directory name must equal the plugin id. Restart afterwards, or sync from the `base` checkout (`sh scripts/sync-plugins.sh custom-pages`), or upload the ZIP / npm name from the admin Plugins page. modern-editor is optional: with it, page editing switches to the visual editor; without it, the built-in block editor is used, and rendering output is identical either way.
 
-## 静态数据占位符
+## Pages
 
-数据 API：`GET /api/custom-pages/data`（返回 `site`、`recentPosts`、`pages`、`now`）。
+Pages are managed at `/admin/pages`, static pages at `/admin/static`, each with its own editor screens. Every entry carries a title, a route, and a draft or published status; static entries also hold the uploaded HTML file. A route duplicating another entry of yours is rejected on save (unique route index). A route colliding with the system or another plugin is not an error: the dispatcher yields, and the list badges the path so you can tell system-reserved from plugin-occupied.
+
+Permissions come in two groups of four, granted per group in the admin UI: `page:manage` / `create` / `edit` / `delete` and `static:manage` / `create` / `edit` / `delete`.
+
+Everything lives in one table, `custom_pages`: kind (page or static), title, route, the block content or the uploaded HTML, status, author, timestamps. The front end queries it per request, which is why saves are visible immediately. Nothing is written to the posts table, so pages never show up in article lists.
+
+## Static pages and placeholders
+
+Upload an HTML file and serve it at any free route. An injected `runtime.js` replaces placeholders in the browser, with values HTML-escaped. The data comes from `GET /api/custom-pages/data`: the site config, the 10 most recent posts with their permalink URLs, the published pages, and the current timestamp.
 
 ```html
 <h1>{{ site.siteName }}</h1>
@@ -36,61 +35,12 @@
 {{/ recentPosts }}
 ```
 
-页面 `<script>` 内：`LinearPressStatic.get('site.siteName')` / `get('recentPosts')` / `replace()` / `reload()`。
+Inside the page's own `<script>`, the same data is reachable through `LinearPressStatic.get('site.siteName')`, `.get('recentPosts')`, `.replace()`, and `.reload()`.
 
-## 路由冲突规则
+## How routing works
 
-| 场景 | 行为 | 列表提示 |
-| --- | --- | --- |
-| 路径已被系统保留（core /admin /api /plugins /posts 固定链接区等） | 分发器让出 | 🚫 系统保留 |
-| 路径已被其他插件注册 | 分发器让出 | ⚠ 插件占用 |
-| 路径与既有页面/静态托管重复 | 保存被拒绝（唯一索引） | — |
+The front-end dispatcher runs as a middleware, but before rendering anything it consults a live snapshot of registered routes. Reserved system paths (`/admin`, `/api`, `/plugins`, the post permalink area, among others) and routes registered by other plugins always win; the dispatcher calls `next()` and yields. That is how another plugin can take over a path without anyone patching the core route table, and it is why installing or removing plugins never breaks saved pages here. The page template belongs to this plugin and static pages are your HTML plus `runtime.js`, so neither path depends on theme views.
 
-## 权限
+## License
 
-`page:manage|create|edit|delete` 与 `static:manage|create|edit|delete`，在「权限组」按组授权。
-
-## 安装与开发
-
-```bash
-# 方式一：工作区同步
-cd base
-sh scripts/sync-plugins.sh custom-pages
-
-# 方式二：克隆到运行目录（目录名必须等于插件 id）
-git clone https://git.linearteam.top/moyuzj/linearpress-custom-pages src/plugins/custom-pages
-
-# 改完重新同步并启动
-npm run typecheck && npm run dev
-```
-
-## 本地开发：怎么拉 / 怎么改 / 怎么跑
-
-```bash
-git clone https://git.linearteam.top/moyuzj/linearpress-custom-pages LinearPress/Plugins/custom-pages
-cd LinearPress/base
-npm install && npm run db:init
-sh scripts/sync-plugins.sh custom-pages
-npm run dev
-```
-
-## 目录结构
-
-```text
-custom-pages/
-├── plugin.json            # Manifest（8 项权限）
-├── index.ts               # 入口：前台分发中间件 + 页面/静态托管后台路由 + 数据 API
-├── src/
-│   ├── store.ts           # custom_pages 表数据访问
-│   └── render.ts          # 块渲染（含 modern-editor 兼容）
-├── views/
-│   ├── web/page.ejs       # 页面模板
-│   └── admin/             # 页面/静态托管列表与编辑器
-└── public/                # runtime.js 与样式
-```
-
-## 贡献与发布
-
-- conventional commits；提交前 `cd base && npm run typecheck`
-- 版本：`git tag v1.0.0 && git push --tags`
-- License：MIT（见仓库 LICENSE）
+GPL-3.0-or-later, Copyright (C) 2026 Evarentha. See LICENSE.
