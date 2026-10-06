@@ -1,11 +1,11 @@
 /*
  * Custom Pages Data Store
  *
- * Storage for custom pages and static hosting, plus route conflict
- * detection.
+ * Storage for custom pages and static hosting, plus route conflict detection.
  *
  * Authors:
  * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ * worryzu <worryzu@gmail.com> @LinearTeam
  *
  * Copyright (C) 2026 Evarentha
  * SPDX-License-Identifier: GPL-3.0-or-later
@@ -58,7 +58,7 @@ export interface DatabaseLike {
   exec(sql: string): unknown;
   all<T = unknown>(sql: string, ...params: unknown[]): Promise<T[]> | T[];
   get<T = unknown>(sql: string, ...params: unknown[]): Promise<T | undefined> | T | undefined;
-  run(sql: string, ...params: unknown[]): Promise<{ lastInsertRowid?: number | bigint }> | { lastInsertRowid?: number | bigint };
+  run(sql: string, ...params: unknown[]): Promise<{ lastInsertRowid?: number | bigint; changes?: number | bigint }> | { lastInsertRowid?: number | bigint; changes?: number | bigint };
 }
 
 /** 创建页面/静态托管表（幂等）。使用主数据库服务，跟随 MySQL 等驱动替换。 */
@@ -172,8 +172,10 @@ export async function savePage(db: DatabaseLike, input: { id?: number; title: st
   const route = normalizeRoute(input.route);
   await assertRouteAvailable(db, route, input.id);
   const json = JSON.stringify(Array.isArray(input.blocks) ? input.blocks : []);
-  if (input.id) {
-    await db.run("UPDATE custom_pages SET title=?, route=?, content_json=?, html_cache=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?", title, route, json, input.htmlCache, input.status, input.id);
+  if (input.id !== undefined) {
+    await assertKind(db, input.id, 'page');
+    await db.run("UPDATE custom_pages SET title=?, route=?, content_json=?, html_cache=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id=? AND kind='page'", title, route, json, input.htmlCache, input.status, input.id);
+    await assertKind(db, input.id, 'page');
     return (await findById(db, input.id))!;
   }
   const result = await db.run('INSERT INTO custom_pages(kind,title,route,content_json,html_cache,status,author_id) VALUES(?,?,?,?,?,?,?)', 'page', title, route, json, input.htmlCache, input.status, input.authorId ?? null);
@@ -188,8 +190,10 @@ export async function saveStatic(db: DatabaseLike, input: { id?: number; title: 
   await assertRouteAvailable(db, route, input.id);
   const html = String(input.html ?? '');
   if (!html.trim()) throw new Error('HTML 内容不能为空（请选择文件或粘贴内容）。');
-  if (input.id) {
-    await db.run('UPDATE custom_pages SET title=?, route=?, file_name=?, html=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?', title, route, input.fileName, html, input.status, input.id);
+  if (input.id !== undefined) {
+    await assertKind(db, input.id, 'static');
+    await db.run("UPDATE custom_pages SET title=?, route=?, file_name=?, html=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id=? AND kind='static'", title, route, input.fileName, html, input.status, input.id);
+    await assertKind(db, input.id, 'static');
     return (await findById(db, input.id))!;
   }
   const result = await db.run('INSERT INTO custom_pages(kind,title,route,file_name,html,status,author_id) VALUES(?,?,?,?,?,?,?)', 'static', title, route, input.fileName, html, input.status, input.authorId ?? null);
@@ -197,6 +201,14 @@ export async function saveStatic(db: DatabaseLike, input: { id?: number; title: 
   return (await findById(db, id))!;
 }
 
-export async function removeById(db: DatabaseLike, id: number): Promise<void> {
-  await db.run('DELETE FROM custom_pages WHERE id=?', id);
+export async function assertKind(db: DatabaseLike, id: number, kind: PageKind): Promise<CustomPageRow> {
+  if (!Number.isSafeInteger(id) || id <= 0) throw new Error('无效页面 id');
+  const row = await findById(db, id);
+  if (!row || row.kind !== kind) throw new Error('页面不存在或类型不匹配');
+  return row;
+}
+export async function removeById(db: DatabaseLike, id: number, kind: PageKind): Promise<void> {
+  await assertKind(db, id, kind);
+  const result = await db.run('DELETE FROM custom_pages WHERE id=? AND kind=?', id, kind);
+  if (result.changes !== undefined && Number(result.changes) === 0) throw new Error('页面不存在或已被删除');
 }

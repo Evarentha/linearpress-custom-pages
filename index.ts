@@ -5,6 +5,7 @@
  *
  * Authors:
  * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ * worryzu <worryzu@gmail.com> @LinearTeam
  *
  * Copyright (C) 2026 Evarentha
  * SPDX-License-Identifier: GPL-3.0-or-later
@@ -163,7 +164,7 @@ export default async function customPages(context: Context): Promise<void> {
   web.register('get', `${PAGE_HOME}/:id/edit`, requireAuth, checkPermission('page:edit'), editPageEditor);
 
   web.register('post', `${PAGE_HOME}/save`, requireAuth, wrap(async (req, res) => {
-    const id = Number(req.body.id) || undefined;
+    const id = parseTargetId(req.body.id);
     const permission = id ? 'page:edit' : 'page:create';
     if (!await context.permissions.has(req.session.userId!, permission)) {
       return void res.status(403).render('error', { title: '权限不足', message: '你没有执行此操作的权限。' });
@@ -182,7 +183,7 @@ export default async function customPages(context: Context): Promise<void> {
   }));
 
   web.register('post', `${PAGE_HOME}/:id/delete`, requireAuth, checkPermission('page:delete'), wrap(async (req, res) => {
-    await removeById(db, Number(param(req.params.id)));
+    await removeById(db, Number(param(req.params.id)), 'page');
     res.redirect(`${PAGE_HOME}?notice=deleted`);
   }));
 
@@ -206,7 +207,7 @@ export default async function customPages(context: Context): Promise<void> {
   web.register('get', `${STATIC_HOME}/:id/edit`, requireAuth, checkPermission('static:edit'), editStaticEditor);
 
   web.register('post', `${STATIC_HOME}/save`, requireAuth, wrap(async (req, res) => {
-    const id = Number(req.body.id) || undefined;
+    const id = parseTargetId(req.body.id);
     const permission = id ? 'static:edit' : 'static:create';
     if (!await context.permissions.has(req.session.userId!, permission)) {
       return void res.status(403).render('error', { title: '权限不足', message: '你没有执行此操作的权限。' });
@@ -220,7 +221,7 @@ export default async function customPages(context: Context): Promise<void> {
   }));
 
   web.register('post', `${STATIC_HOME}/:id/delete`, requireAuth, checkPermission('static:delete'), wrap(async (req, res) => {
-    await removeById(db, Number(param(req.params.id)));
+    await removeById(db, Number(param(req.params.id)), 'static');
     res.redirect(`${STATIC_HOME}?notice=deleted`);
   }));
 
@@ -238,6 +239,12 @@ export default async function customPages(context: Context): Promise<void> {
   context.logger.info(`activated (${(await listByKind(db, 'page')).length} pages, ${(await listByKind(db, 'static')).length} static)`);
 }
 
+function parseTargetId(raw: unknown): number | undefined {
+  if (raw === undefined || raw === null || raw === '') return undefined;
+  const id = Number(raw);
+  if (!Number.isSafeInteger(id) || id <= 0) throw new Error('无效页面 id');
+  return id;
+}
 async function modernEditorEnabled(context: Context): Promise<boolean> {
   try {
     const list = await context.plugins.list();
